@@ -1,0 +1,36 @@
+apiVersion: apps/v1 #version de api
+kind: Deployment #tipo de archivo
+metadata:
+  name: auth-depl #como un nombre
+spec:
+  replicas: 1 #indicamos una replica en ejecucion (un pod)
+  selector:
+    matchLabels: # Seleccionara el template de abajo
+      app: auth
+  template:
+    metadata:
+      labels: #para el matchLabel
+        app: auth
+    spec:
+      containers:
+        - name: auth #nombre del contenedeor (no es usado x el matchlabel
+          image: gustavocondezo/auth
+
+---
+
+apiVersion: v1
+kind: Service # tipo de archivo
+metadata:
+  name: auth-srv
+spec:
+  selector: #selecciona los pods con label auth
+    app: auth
+  type: ClusterIP #Si no se pone sera x defecto ClusterIP
+  #ClusterIP PERMITE QUE SE CONECTEN ENTRE PODS (interna)
+  #NodePort permite que el puerto este disponible fuera (externa)
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000 # El Node Port Service abre este puerto (al exterior) y luego redirige hacia el targetPort. (pueden ser diferentes)
+      targetPort: 3000 # puerto donde nuestra app escucha (dentro del contenedor)
+# adicionalmente se creara un puerto externo aleatorio con ip (localhost) desde donde sera accesible el pod desde el exterior

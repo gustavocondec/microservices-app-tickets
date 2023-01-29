@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/* #son los archivos de configuracion que se cargaran al cluster
+build:
+  local:
+    push: false #cada que se construya una imagen de doccker no intente enviarla a docker hub
+  artifacts: #los objetos que se construiran
+    - image: gustavocondezo/auth
+      context: auth #Caarpeta donde esta
+      docker:
+        dockerfile: Dockerfile #archivo de docker
+      sync: #que hara cuando haya modificaciones de archivos del context
+        manual: #el manejo al haber cambios sera manual segun esta conf
+          - src: 'src/**/*.ts' #manejara esta ruta
+            dest: . #copiar los archivos al container
