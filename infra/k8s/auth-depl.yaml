@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth #nombre del contenedeor (no es usado x el matchlabel
-          image: gustavocondezo/auth
+          image: us.gcr.io/ticketing-dev-376215/auth
 
 ---
 

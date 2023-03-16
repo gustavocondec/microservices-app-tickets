@@ -5,14 +5,18 @@ deploy:
     manifests:
       - ./infra/k8s/* #son los archivos de configuracion que se cargaran al cluster
 build:
-  local:
-    push: false #cada que se construya una imagen de doccker no intente enviarla a docker hub
+  #local:
+  # push: false #cada que se construya una imagen de doccker no intente enviarla a docker hub
+  googleCloudBuild: { projectId: ticketing-dev-376215 }
   artifacts: #los objetos que se construiran
-    - image: gustavocondezo/auth
+    #- image: gustavocondezo/auth #en local referencia a docker images
+    - image: us.gcr.io/ticketing-dev-376215/auth #en cloud apunta al repo de containers de google¿?
       context: auth #Caarpeta donde esta
       docker:
         dockerfile: Dockerfile #archivo de docker
       sync: #que hara cuando haya modificaciones de archivos del context
-        manual: #el manejo al haber cambios sera manual segun esta conf
-          - src: 'src/**/*.ts' #manejara esta ruta
-            dest: . #copiar los archivos al container
+#        manual: #el manejo al haber cambios sera manual segun esta conf
+#          - src: 'src/**/*.ts' #manejara esta ruta
+#            dest: . #copiar los archivos al container
+        infer:
+          - 'src/**/*.ts'
