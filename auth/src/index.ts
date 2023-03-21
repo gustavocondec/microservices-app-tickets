@@ -1,14 +1,28 @@
-import express from "express"
-import {json} from "body-parser"
+import express from 'express'
+
+import { json } from 'body-parser'
+import { currentUserRouter } from './routes/current-user'
+import { signupRouter } from './routes/signup'
+import { signinRouter } from './routes/signin'
+import { signoutRouter } from './routes/signout'
+import { errorHandler } from './middlewares/error-handler'
+import { NotFoundError } from './errors/not-found-error'
+import 'express-async-errors' // permite manejar los errores de forma asyncrona
 
 const app = express()
 
 app.use(json())
 
-app.get('/api/users/currentuser',(req,res)=>{
-  res.send('Hi')
-})
+app.use(currentUserRouter)
+app.use(signupRouter)
+app.use(signinRouter)
+app.use(signoutRouter)
 
-app.listen(3000,()=>{
+app.all('*', async (req, res, next) => {
+  throw new NotFoundError()
+})
+app.use(errorHandler)
+
+app.listen(3000, () => {
   console.log('Listening on port 3000!!!')
 })
