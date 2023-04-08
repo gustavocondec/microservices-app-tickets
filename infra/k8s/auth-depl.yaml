@@ -15,6 +15,12 @@ spec:
       containers:
         - name: auth #nombre del contenedeor (no es usado x el matchlabel
           image: gustavocondezo/auth
+          env: #Añadir variables de entorno a estos pods
+            - name: JWT_KEY #Nombre
+              valueFrom: #Origen le decimos que los extraiga de kubernetes secrets
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 
 ---
 
