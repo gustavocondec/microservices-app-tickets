@@ -1,7 +1,9 @@
 module.exports = {
   env: {
     es2021: true,
-    node: true
+    node: true,
+    browser: false,
+    jest: true
   },
   extends: ['standard-with-typescript'],
   overrides: [
