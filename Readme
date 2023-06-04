@@ -2,3 +2,7 @@
 ```
     kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
 ```
+
+Si no carga la web, validar el nginx-controller:
+https://www.udemy.com/course/microservices-with-node-js-and-react/learn/lecture/26492690#
+

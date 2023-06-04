@@ -3,7 +3,7 @@ kind: Config
 deploy:
   kubectl:
     manifests:
-      - ./infra/k8s/* #son los archivos de configuracion que se cargaran al cluster
+      - './infra/k8s/*' # son los archivos de configuracion que se cargaran al cluster
 build:
   local:
     push: false #cada que se construya una imagen de doccker no intente enviarla a docker hub
@@ -16,3 +16,11 @@ build:
         manual: #el manejo al haber cambios sera manual segun esta conf
           - src: 'src/**/*.ts' #manejara esta ruta
             dest: . #copiar los archivos al container
+    - image: gustavocondezo/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
