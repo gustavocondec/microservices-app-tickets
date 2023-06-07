@@ -2,8 +2,8 @@ import mongoose from 'mongoose'
 import { app } from './app'
 
 const start = async (): Promise<void> => {
-  if (process.env.JWT_KEY == null) throw new Error('JWT_KEY must be defined')
-  if (process.env.MONGO_URI == null) throw new Error('MONGO_URI must be defined')
+  if (process.env?.JWT_KEY == null) throw new Error('JWT_KEY must be defined')
+  if (process.env?.MONGO_URI == null) throw new Error('MONGO_URI must be defined')
 
   try {
   // await mongoose.connect('mongodb://localhost:27017') //si mongo esta instalado en nuestra local o en cloud

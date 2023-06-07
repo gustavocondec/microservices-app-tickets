@@ -24,3 +24,11 @@ build:
         manual:
           - src: '**/*.js'
             dest: .
+    - image: gustavocondezo/tickets
+      context: tickets #Caarpeta donde esta
+      docker:
+        dockerfile: Dockerfile #archivo de docker
+      sync: #que hara cuando haya modificaciones de archivos del context
+        manual: #el manejo al haber cambios sera manual segun esta conf
+          - src: 'src/**/*.ts' #manejara esta ruta
+            dest: . #copiar los archivos al container

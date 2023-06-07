@@ -1,24 +1,24 @@
 apiVersion: apps/v1 #version de api
 kind: Deployment #tipo de archivo
 metadata:
-  name: auth-depl #como un nombre
+  name: tickets-depl #como un nombre
 spec:
   replicas: 1 #indicamos una replica en ejecucion (un pod)
   selector:
     matchLabels: # Seleccionara el template de abajo
-      app: auth
+      app: tickets
   template:
     metadata:
       labels: #para el matchLabel
-        app: auth
+        app: tickets
     spec:
       containers:
-        - name: auth #nombre del contenedeor (no es usado x el matchlabel
-          image: gustavocondezo/auth
+        - name: tickets #nombre del contenedeor (no es usado x el matchlabel
+          image: gustavocondezo/tickets
           env: #Añadir variables de entorno a estos pods
-            - name: MONGO_URI
-              value: 'mongodb://auth-mongo-srv:27017/auth'
-            - name: JWT_KEY #Nombre
+            - name: MONGO_URI #variable con valor definido
+              value: 'mongodb://tickets-mongo-srv:27017/tickets'
+            - name: JWT_KEY #variable cuyo valor sera extraido de kubernetes secrets
               valueFrom: #Origen le decimos que los extraiga de kubernetes secrets
                 secretKeyRef:
                   name: jwt-secret
@@ -29,15 +29,15 @@ spec:
 apiVersion: v1
 kind: Service # tipo de archivo
 metadata:
-  name: auth-srv
+  name: tickets-srv
 spec:
-  selector: #selecciona los pods con label auth
-    app: auth
+  selector: #selecciona los pods con label tickets
+    app: tickets
   type: ClusterIP #Si no se pone sera x defecto ClusterIP
   #ClusterIP PERMITE QUE SE CONECTEN ENTRE PODS (interna)
   #NodePort permite que el puerto este disponible fuera (externa)
   ports:
-    - name: auth
+    - name: tickets
       protocol: TCP
       port: 3000 # El Node Port Service abre este puerto (al exterior) y luego redirige hacia el targetPort. (pueden ser diferentes)
       targetPort: 3000 # puerto donde nuestra app escucha (dentro del contenedor)

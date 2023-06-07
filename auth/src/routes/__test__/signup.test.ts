@@ -2,7 +2,7 @@ import request from 'supertest'
 import { app } from '../../app'
 
 it('returns a 201 on successful signup', async () => {
-  return await request(app)
+  await request(app)
     .post('/api/users/signup')
     .send({
       email: 'test@test.com',
@@ -12,7 +12,7 @@ it('returns a 201 on successful signup', async () => {
 })
 
 it('returns a 400 with an invalid email', async () => {
-  return await request(app)
+  await request(app)
     .post('/api/users/signup')
     .send({
       email: 'test.test.com',
@@ -22,7 +22,7 @@ it('returns a 400 with an invalid email', async () => {
 })
 
 it('returns a 400 with an invalid password', async () => {
-  return await request(app)
+  await request(app)
     .post('/api/users/signup')
     .send({
       email: 'test@test.com',
@@ -32,7 +32,7 @@ it('returns a 400 with an invalid password', async () => {
 })
 
 it('returns a 400 with an missing email and password', async () => {
-  return await request(app)
+  await request(app)
     .post('/api/users/signup')
     .send({})
     .expect(400)
