@@ -2,6 +2,8 @@ import express, { type Request, type Response } from 'express'
 import { body } from 'express-validator'
 import { requireAuth, validateRequest } from '@gc-tickets/common'
 import { Ticket } from '../models/ticket'
+import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher'
+import { kafkaWrapper } from '../kafka-wrapper'
 
 const router = express.Router()
 
@@ -15,10 +17,15 @@ router.post('/api/tickets', requireAuth, [
   const ticket = Ticket.build({
     title,
     price,
-    userId: (req.currentUser)!.id
+    userId: req.currentUser!.id
   })
   await ticket.save()
-
+  await new TicketCreatedPublisher(kafkaWrapper.client).publish({
+    id: ticket.id,
+    title: ticket.title,
+    price: ticket.price,
+    userId: ticket.userId
+  })
   res.status(201).send(ticket)
 })
 

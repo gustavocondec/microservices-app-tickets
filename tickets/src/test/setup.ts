@@ -1,12 +1,11 @@
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
-import request from 'supertest'
-import { app } from '../app'
 import jwt from 'jsonwebtoken'
 
 declare global{
   var signin: () => Promise<string[]>
 }
+jest.mock('../kafka-wrapper')
 
 let mongo: MongoMemoryServer | null
 beforeAll(async () => {
@@ -19,6 +18,7 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
+  jest.clearAllMocks() // limpia contador de ejecuaciones y mas para cada mock
   const collections = await mongoose.connection.db.collections()
 
   for (const collection of collections) { await collection.deleteMany({}) }

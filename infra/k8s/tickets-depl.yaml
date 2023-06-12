@@ -23,7 +23,12 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
-
+            - name: KAFKA_URL
+              value: 'kafka-srv:9092'
+            - name: KAFKA_CLIENT_ID #Toma el valor unico por intancia proporcionado por kubenetes
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
 ---
 
 apiVersion: v1

@@ -1,6 +1,8 @@
 import request from 'supertest'
 import { app } from '../../app'
 import mongoose from 'mongoose'
+import { kafkaWrapper } from '../../kafka-wrapper'
+import { Subjects } from '@gc-tickets/common'
 
 it('returns 404 if the provided of does not exist', async () => {
   const id = new mongoose.Types.ObjectId().toHexString()
@@ -107,4 +109,31 @@ it('update the ticket provided valid inputs', async () => {
 
   expect(ticketReponse.body.title).toEqual(data.title)
   expect(ticketReponse.body.price).toEqual(data.price)
+})
+
+it('publishes an event', async () => {
+  const cookie = await global.signin()
+  // primero crear ticket, el global. signin crea un nuevo usuario
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'sasas',
+      price: 20
+    })
+
+  const data = {
+    title: 'new title',
+    price: 100
+  }
+  await request(app)
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send(data)
+    .expect(200)
+
+  // 2 por: 1 crear, 1 actualizar
+  expect(kafkaWrapper.client.producer().send).toHaveBeenCalledTimes(2) // debe reestablecerse las llamadas
+  expect(kafkaWrapper.client.producer().send).toHaveBeenLastCalledWith({ topic: Subjects.TicketUpdated, messages: expect.anything() })
 })

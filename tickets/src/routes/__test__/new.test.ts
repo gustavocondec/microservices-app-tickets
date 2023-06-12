@@ -1,6 +1,8 @@
 import request from 'supertest'
 import { app } from '../../app'
 import { Ticket } from '../../models/ticket'
+import { kafkaWrapper } from '../../kafka-wrapper'
+import { Subjects } from '@gc-tickets/common' // a pesar de importar la funcion real importara el mock
 
 it('has a route handler listening to /api/tickets for post request', async () => {
   const response = await request(app)
@@ -84,4 +86,20 @@ it('creates a ticket with valid inputs', async () => {
   expect(tickets.length).toEqual(1)
   expect(tickets[0].price).toEqual(toSave.price)
   expect(tickets[0].title).toEqual(toSave.title)
+})
+
+it('publishes an event', async () => {
+  const toSave = {
+    title: 'asasas',
+    price: 20
+  }
+
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', await global.signin())
+    .send(toSave)
+    .expect(201)
+  expect(kafkaWrapper.client.producer().send).toHaveBeenCalledTimes(1)
+  expect(kafkaWrapper.client.producer().send).toHaveBeenCalledTimes(1)
+  expect(kafkaWrapper.client.producer().send).toHaveBeenLastCalledWith({ topic: Subjects.TicketCreated, messages: expect.anything() })
 })

@@ -7,6 +7,8 @@ import {
   NotAuthorizedError
 } from '@gc-tickets/common'
 import { Ticket } from '../models/ticket'
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher'
+import { kafkaWrapper } from '../kafka-wrapper'
 
 const router = express.Router()
 
@@ -26,6 +28,12 @@ router.put('/api/tickets/:id', requireAuth, [
   })
 
   await ticket.save()
+  await new TicketUpdatedPublisher(kafkaWrapper.client).publish({
+    id: ticket.id,
+    title: ticket.title,
+    price: ticket.price,
+    userId: ticket.userId
+  })
 
   res.send(ticket)
 })
