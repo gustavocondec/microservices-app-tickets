@@ -9,6 +9,13 @@ export const kafkaWrapper = {
   client: {
     producer: jest.fn().mockImplementation(() => {
       return prod
-    })
+    }),
+    publish: jest
+      .fn()
+      .mockImplementation(
+        (subject: string, data: string, callback: () => void) => {
+          callback()
+        }
+      )
   }
 }
